@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bank Exam Quiz</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+}
+
+/* ========================= */
+/* TIMER AREA */
+/* ========================= */
+
+#timer-container{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:#f4f6f9;
+    padding-bottom:10px;
+}
+
+#timer{
+    background:#222;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.timer-buttons{
+    text-align:center;
+}
+
+#pauseBtn,
+#resumeBtn{
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    margin:5px;
+}
+
+#pauseBtn{
+    background:#ff9800;
+    color:white;
+}
+
+#resumeBtn{
+    background:#28a745;
+    color:white;
+}
+
+.question{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.question h3{
+    margin-bottom:15px;
+}
+
+.option{
+    display:block;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.option:hover{
+    background:#f0f0f0;
+}
+
+.selected{
+    background:#cfe2ff;
+    border:2px solid #0d6efd;
+}
+
+.mark-btn{
+    margin-top:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#ff9800;
+    color:white;
+}
+
+.marked{
+    background:#ffcc80 !important;
+}
+
+.review-marked{
+    background:#e0e0e0 !important;
+    border:2px solid #9e9e9e;
+}
+
+.clear-btn{
+    margin-top:10px;
+    margin-left:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#dc3545;
+    color:white;
+}
+
+.submit-btn{
+    width:100%;
+    padding:15px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    background:#28a745;
+    color:white;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+.result-box{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.review-btn{
+    padding:12px 20px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#007bff;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.review-question{
+    background:white;
+    padding:20px;
+    margin:20px 0;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.correct{
+    color:green;
+    font-weight:bold;
+}
+
+.wrong{
+    color:red;
+    font-weight:bold;
+}
+
+.unanswered{
+    color:orange;
+    font-weight:bold;
+}
+
+.correct-answer{
+    background:#d4edda;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+}
+
+.disabled-option{
+    pointer-events:none;
+    opacity:0.6;
+}
+
+.disabled-btn{
+    opacity:0.6;
+    cursor:not-allowed;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Bank Exam MCQ Quiz</h1>
+
+<!-- ========================= -->
+<!-- TIMER -->
+<!-- ========================= -->
+
+<div id="timer-container">
+
+    <div id="timer">
+        Time Left: 20:00
+    </div>
+
+    <div class="timer-buttons">
+
+        <button id="pauseBtn" onclick="pauseTimer()">
+            Pause
+        </button>
+
+        <button id="resumeBtn" onclick="resumeTimer()" disabled>
+            Resume
+        </button>
+
+    </div>
+
+</div>
+
+<div id="quiz"></div>
+
+<button class="submit-btn" onclick="submitQuiz()">
+Submit Quiz
+</button>
+
+</div>
+
+<script>
+
+// ===============================
+// QUESTIONS AREA
+// ===============================
+
+const questions = [
+
+{q:"The National Assembly of Bulgaria approved former President Rumen Radev as the new Prime Minister in the country’s eighth parliamentary election. How many members voted in favour of his appointment?", options:["118 out of 240","120 out of 240","124 out of 240","128 out of 240"], answer:2},
+
+{q:"Rumen Radev, recently appointed Prime Minister, is associated with which European country whose capital is Sofia?", options:["Serbia","Bulgaria","Romania","Slovakia"], answer:1},
+
+{q:"Which of the following international honours was conferred upon Rumen Radev by Portugal in 2022?", options:["Order of Merit","Order of Prince Henry","Order of the Redeemer","Order of Liberty"], answer:1},
+
+{q:"Rumen Radev received the Order of Merit in 2024 from:", options:["Greece","Spain","Italy","France"], answer:2},
+
+{q:"The Order of the Redeemer, one of the international honours awarded to Rumen Radev, was conferred by:", options:["Portugal","Italy","Austria","Greece"], answer:3},
+
+{q:"Laura Virginia Fernández Delgado was sworn in as the ____ President of Costa Rica.", options:["48th","49th","50th","51st"], answer:2},
+
+{q:"Laura Virginia Fernández Delgado assumed office as President of Costa Rica for a term extending from:", options:["2025–2029","2026–2030","2026–2031","2027–2031"], answer:1},
+
+{q:"Laura Virginia Fernández Delgado succeeded whom as President of Costa Rica?", options:["Carlos Alvarado Quesada","Luis Guillermo Solís","Rodrigo Chaves Robles","Óscar Arias Sánchez"], answer:2},
+
+{q:"Before becoming President of Costa Rica, Laura Virginia Fernández Delgado served as Minister of National Planning and Economic Policy during:", options:["2021–2024","2022–2025","2023–2025","2020–2024"], answer:1},
+
+{q:"Laura Virginia Fernández Delgado also served as Minister of the Presidency during:", options:["2022–2024","2023–2025","2024–2025","2025–2026"], answer:2},
+
+{q:"Suvendu Adhikari was sworn in as the ____ Chief Minister of West Bengal.", options:["7th","8th","9th","10th"], answer:2},
+
+{q:"Suvendu Adhikari became the first Chief Minister of West Bengal from which political party?", options:["Indian National Congress (INC)","Communist Party of India (Marxist) [CPI(M)]","Bharatiya Janata Party (BJP)","All India Trinamool Congress (AITC)"], answer:2},
+
+{q:"Suvendu Adhikari succeeded whom as the Chief Minister of West Bengal?", options:["Buddhadeb Bhattacharjee","Jyoti Basu","Mamata Banerjee","Partha Chatterjee"], answer:2},
+
+{q:"The oath of office to Suvendu Adhikari as Chief Minister of West Bengal was administered by:", options:["C. V. Ananda Bose","Jagdeep Dhankhar","Ravindra Narayana Ravi","Keshari Nath Tripathi"], answer:2},
+
+{q:"The swearing-in ceremony of Suvendu Adhikari was held at:", options:["Eden Gardens, Kolkata","Netaji Indoor Stadium, Kolkata","Brigade Parade Grounds, Kolkata","Raj Bhavan, Kolkata"], answer:2},
+
+{q:"C. Joseph Vijay, founder of Tamilaga Vettri Kazhagam (TVK), took oath as the ____ Chief Minister of Tamil Nadu.", options:["11th","12th","13th","14th"], answer:2},
+
+{q:"C. Joseph Vijay represented which constituency while taking oath as Chief Minister of Tamil Nadu?", options:["Kolathur","Chepauk-Thiruvallikeni","Thousand Lights","Perambur"], answer:3},
+
+{q:"C. Joseph Vijay succeeded whom as Chief Minister of Tamil Nadu?", options:["O. Panneerselvam","Edappadi K. Palaniswami","Muthuvel Karunanidhi Stalin","Udhayanidhi Stalin"], answer:2},
+
+{q:"The oath of office to C. Joseph Vijay was administered by:", options:["R. N. Ravi","Rajendra Vishwanath Arlekar","Banwarilal Purohit","C. P. Radhakrishnan"], answer:1},
+
+{q:"The swearing-in ceremony of C. Joseph Vijay as Tamil Nadu Chief Minister was held at:", options:["Kalaivanar Arangam","Raj Bhavan, Chennai","Jawaharlal Nehru Indoor Stadium, Chennai","YMCA Grounds, Chennai"], answer:2},
+
+{q:"Who was appointed as Chairman and Managing Director (CMD) of Steel Authority of India Limited (SAIL) with effect from 9 May 2026?", options:["Krishna Kumar Singh","Amarendu Prakash","Ashok Kumar Panda","Soma Mondal"], answer:2},
+
+{q:"Ashok Kumar Panda succeeded whom as Chairman and Managing Director of SAIL?", options:["Amarendu Prakash","Krishna Kumar Singh","T. V. Narendran","Seshagiri Rao"], answer:1},
+
+{q:"SAIL has set a long-term production capacity target of:", options:["25 MTPA","30 MTPA","35 MTPA","40 MTPA"], answer:2},
+
+{q:"Steel Authority of India Limited (SAIL) functions under:", options:["Ministry of Heavy Industries","Ministry of Commerce & Industry","Ministry of Mines","Ministry of Steel"], answer:3},
+
+{q:"Dr. Harvansh Chawla was appointed Chairman of:", options:["BRICS Bank","BRISEC Chamber of Commerce & Industry (BRISEC CCI)","FICCI","International Chamber of Commerce India"], answer:1},
+
+{q:"Before becoming Chairman of BRISEC CCI, Dr. Harvansh Chawla served as Chairman of:", options:["ASSOCHAM","CII","BRICS Chamber of Commerce & Industry (BRICS CCI)","FIEO"], answer:2},
+
+{q:"The Confederation of Indian Industry (CII) elected whom as its President for 2026–27?", options:["Rajiv Memani","R. Mukundan","Suchitra Ella","Shashwat Goenka"], answer:1},
+
+{q:"R. Mukundan succeeded whom as President of CII?", options:["Suchitra Ella","Shashwat Goenka","Rajiv Memani","Sanjiv Puri"], answer:2},
+
+{q:"Who was elected as President-Designate of CII for the 2026–27 term?", options:["Rajiv Memani","Shashwat Goenka","Suchitra Ella","N. Chandrasekaran"], answer:2},
+
+{q:"Who was elected as Vice President of CII for the 2026–27 term?", options:["Suchitra Ella","Rajiv Memani","Sanjiv Mehta","Shashwat Goenka"], answer:3},
+
+{q:"The Confederation of Indian Industry (CII) was established in:", options:["1885","1890","1895","1900"], answer:2},
+
+{q:"N. Rangasamy was sworn in as Chief Minister of Puducherry for the ____ time.", options:["Third","Fourth","Fifth","Sixth"], answer:2},
+
+{q:"N. Rangasamy belongs to which political party?", options:["DMK","BJP","AINRC","AIADMK"], answer:2},
+
+{q:"The oath of office to N. Rangasamy was administered by:", options:["Tamilisai Soundararajan","Kuniyil Kailashnathan","Rajendra Vishwanath Arlekar","R. N. Ravi"], answer:1},
+
+{q:"The voter turnout recorded in the Puducherry election was:", options:["85.67%","87.45%","88.92%","89.87%"], answer:3},
+
+{q:"Yoweri Museveni was sworn in as President of Uganda for his:", options:["Fifth term","Sixth term","Seventh term","Eighth term"], answer:2},
+
+{q:"The oath ceremony of Yoweri Museveni was held at:", options:["State House, Entebbe","Mandela National Stadium","Kololo Independence Grounds, Kampala","Parliament Grounds, Kampala"], answer:2},
+
+{q:"Jio Platforms Limited (JPL) appointed whom as its first Managing Director (MD) for a five-year term?", options:["Mukesh Ambani","Isha Ambani","Akash Ambani","Kiran Thomas"], answer:2},
+
+{q:"Akash Ambani’s appointment as the first Managing Director of Jio Platforms Limited became effective from:", options:["1 April 2026","5 April 2026","9 April 2026","15 April 2026"], answer:2},
+
+{q:"Ali Falih Kadhim al-Zaidi, sworn in as the new Prime Minister of Iraq, created history by becoming:", options:["First Independent Prime Minister of Iraq","Youngest Prime Minister in Iraq’s modern history","First Technocrat Prime Minister of Iraq","Longest-serving Prime Minister of Iraq"], answer:1},
+
+{q:"Vadasseri Damodara Menon (V. D.) Satheesan was sworn in as the ____ Chief Minister (CM) of Kerala after succeeding Pinarayi Vijayan.", options:["11th","12th","13th","14th"], answer:2},
+
+{q:"V. D. Satheesan, who recently assumed office as Chief Minister of Kerala, succeeded:", options:["Oommen Chandy","Ramesh Chennithala","Pinarayi Vijayan","V. S. Achuthanandan"], answer:2},
+
+{q:"The oath of office to V. D. Satheesan as Chief Minister of Kerala was administered by:", options:["Arif Mohammed Khan","Rajendra Vishwanath Arlekar","C. P. Radhakrishnan","R. N. Ravi"], answer:1},
+
+{q:"Saurabh Vijay officially assumed charge as the Chief Executive Officer (CEO) of:", options:["National Informatics Centre (NIC)","Unique Identification Authority of India (UIDAI)","National e-Governance Division (NeGD)","Digital India Corporation (DIC)"], answer:1},
+
+{q:"The Unique Identification Authority of India (UIDAI) functions under which ministry?", options:["Ministry of Communications","Ministry of Electronics and Information Technology (MeitY)","Ministry of Home Affairs","Ministry of Statistics and Programme Implementation"], answer:1},
+
+{q:"Saurabh Vijay succeeded whom as CEO of UIDAI?", options:["Ajay Bhushan Pandey","Pankaj Kumar","Vivek Chandra Verma","Saurabh Garg"], answer:2},
+
+{q:"UIDAI is the nodal agency responsible for:", options:["Digital Payments Regulation","Aadhaar Operations","Cyber Security Audits","Telecom Licensing"], answer:1},
+
+{q:"The Reserve Bank of India (RBI) appointed Gunveer Singh as Executive Director (ED) in charge of:", options:["Department of Banking Regulation (DBR)","Department of Supervision (DoS)","Department of Payment and Settlement Systems (DPSS)","Financial Inclusion and Development Department (FIDD)"], answer:2},
+
+{q:"The Department of Payment and Settlement Systems (DPSS) of RBI is primarily responsible for:", options:["Currency Printing and Distribution","Monetary Policy Formulation","Regulation and Supervision of Payment Systems","Foreign Exchange Management"], answer:2},
+
+{q:"Bharat Singh Chauhan was re-elected as Chairman of the Commonwealth Chess Association (CCA) for which term?", options:["2025–2029","2026–2029","2026–2030","2027–2031"], answer:2},
+
+{q:"The election of Bharat Singh Chauhan as Chairman of the Commonwealth Chess Association (CCA) took place in:", options:["Kuala Lumpur, Malaysia","Colombo, Sri Lanka","Wasakaduwa, Sri Lanka","Kandy, Sri Lanka"], answer:2},
+
+{q:"Which new event was announced by the Commonwealth Chess Association (CCA) under Bharat Singh Chauhan’s tenure?", options:["Commonwealth Rapid Chess Cup","Commonwealth Online Chess League","Commonwealth School Chess Championship","Commonwealth Grandmasters Series"], answer:2},
+
+{q:"The first edition of the Commonwealth School Chess Championship is scheduled to be hosted in:", options:["Singapore","Sri Lanka","India","Malaysia"], answer:3},
+
+{q:"Commonwealth Chess Association (CCA), recently in news, was established in:", options:["1978","1979","1980","1981"], answer:2},
+
+{q:"Medha Vishram Kulkarni was appointed Chairperson of the Department-related Parliamentary Standing Committee on:", options:["Finance and Corporate Affairs","Agriculture and Rural Development","Science & Technology, Environment, Forests and Climate Change","Education and Culture"], answer:2},
+
+{q:"Medha Vishram Kulkarni is a Member of:", options:["Lok Sabha","Rajya Sabha","Legislative Council","State Assembly"], answer:1},
+
+{q:"The appointment of Medha Kulkarni as Chairperson of the Parliamentary Panel became effective from:", options:["1 May 2026","10 May 2026","18 May 2026","25 May 2026"], answer:2},
+
+{q:"Who approved the appointment of Medha Kulkarni as Chairperson of the Parliamentary Standing Committee?", options:["President of India","Speaker of Lok Sabha","Vice President of India C. P. Radhakrishnan","Prime Minister of India"], answer:2},
+
+{q:"Sudheer Gupta was appointed as Chairperson of the Joint Committee on:", options:["Digital India Bill, 2026","Corporate Laws (Amendment) Bill, 2026","Banking Regulation (Amendment) Bill, 2026","Data Protection Bill, 2026"], answer:1},
+
+{q:"Group Captain Kolal Krishnamurthy (K.K.) Venugopal (Retd.) became the first Indian test pilot elected as Fellow of:", options:["Royal Aeronautical Society (RAeS)","Society of Experimental Test Pilots (SETP), USA","American Institute of Aeronautics and Astronautics (AIAA)","International Test Pilots Association (ITPA)"], answer:1},
+
+{q:"K.K. Venugopal currently serves as Executive Director and Chief Test Pilot (Fixed Wing) at:", options:["DRDO","ISRO","HAL","BEL"], answer:2},
+
+{q:"Which award was conferred upon K.K. Venugopal in 2004?", options:["Shaurya Chakra","Kirti Chakra","Vayu Sena Medal (VSM)","Param Vishisht Seva Medal (PVSM)"], answer:2},
+
+{q:"Which senior executive resigned from Fino Payments Bank to pursue opportunities outside the organisation?", options:["Rishi Gupta","Ashwini Kumar Tewari","Rajeev Yadav","Deepak Sharma"], answer:0},
+
+{q:"Rishi Gupta resigned from the post of:", options:["Chairman","Whole-Time Director","MD & CEO","Executive Director"], answer:2},
+
+{q:"Fino Payments Bank commenced operations in:", options:["2015","2016","2017","2018"], answer:2},
+
+{q:"The headquarters of Fino Payments Bank is located in:", options:["Bengaluru","Mumbai","Pune","Hyderabad"], answer:1},
+
+{q:"Kevin Warsh was sworn in as Chairman of the Board of Governors of:", options:["European Central Bank","Bank of England","Federal Reserve System","World Bank"], answer:2},
+
+{q:"Kevin Warsh succeeded whom as Chairman of the US Federal Reserve?", options:["Janet Yellen","Jerome Powell","Ben Bernanke","Alan Greenspan"], answer:1},
+
+{q:"The Federal Reserve System, recently in news due to Kevin Warsh’s appointment, was established in:", options:["1907","1910","1913","1915"], answer:2},
+
+{q:"The headquarters of the Federal Reserve System is located in:", options:["New York","Chicago","Washington D.C.","Boston"], answer:2},
+
+{q:"RBI approved the reappointment of Sandeep Bakshi as Managing Director (MD) and Chief Executive Officer (CEO) of:", options:["Axis Bank","HDFC Bank","ICICI Bank","Kotak Mahindra Bank"], answer:2},
+
+{q:"Sandeep Bakshi’s reappointment as MD & CEO of ICICI Bank was approved for an additional:", options:["One year","Two years","Three years","Five years"], answer:1},
+
+{q:"ICICI Bank was established in:", options:["1991","1992","1994","1996"], answer:2},
+
+{q:"Vice Admiral Ajay Kochhar assumed charge as the ____ Vice Chief of the Naval Staff (VCNS) of the Indian Navy.", options:["46th","47th","48th","49th"], answer:2},
+
+{q:"Prior to becoming Vice Chief of the Naval Staff, Vice Admiral Ajay Kochhar was serving as:", options:["Flag Officer Commanding Western Fleet","Commander-in-Chief, Andaman & Nicobar Command","Chief of Personnel, Indian Navy","Vice Chief of Integrated Defence Staff"], answer:1},
+
+{q:"Vice Admiral Ajay Kochhar succeeded:", options:["Vice Admiral Dinesh K. Tripathi","Vice Admiral Krishna Swaminathan","Vice Admiral Sanjay Vatsayan","Vice Admiral R. Hari Kumar"], answer:2},
+
+{q:"Which of the following honours was conferred upon Vice Admiral Ajay Kochhar in 2026?", options:["Ati Vishisht Seva Medal (AVSM)","Param Vishisht Seva Medal (PVSM)","Nau Sena Medal (NM)","Sena Medal (SM)"], answer:1},
+
+{q:"Brajesh Singh assumed charge as Managing Director (MD) and Chief Executive Officer (CEO) of:", options:["Bank of Baroda","Punjab National Bank","Canara Bank","Indian Bank"], answer:2},
+
+{q:"Brajesh Singh succeeded whom as MD & CEO of Canara Bank?", options:["Lingam Venkata Prabhakar","K. Satyanarayana Raju","Debadatta Chand","Atanu Kumar Das"], answer:1},
+
+{q:"Canara Bank, recently in news due to the appointment of Brajesh Singh as MD & CEO, was founded in 1906 by:", options:["V. Krishnaswamy Iyer","Sir M. Visvesvaraya","Ammembal Subba Rao Pai","T. M. A. Pai"], answer:2},
+
+{q:"Sanjay Lohiya assumed charge as Secretary of the Department of Financial Services (DFS) under the Ministry of Finance. He succeeded:", options:["Tuhin Kanta Pandey","M. Nagaraju","Vivek Joshi","Ajay Seth"], answer:1},
+
+{q:"The Department of Financial Services (DFS), where Sanjay Lohiya assumed charge as Secretary, functions under:", options:["Ministry of Commerce & Industry","Ministry of Corporate Affairs","Ministry of Finance","Ministry of Economic Affairs"], answer:2},
+
+{q:"Which of the following areas falls under the responsibilities of the Department of Financial Services (DFS)?", options:["Industrial Licensing and FDI Promotion","Banking, Insurance, Pension Reforms and Financial Inclusion","Tax Administration and GST Collection","Foreign Trade Policy Formulation"], answer:1},
+
+{q:"The headquarters of the Department of Financial Services (DFS) is located in:", options:["Mumbai","New Delhi","Hyderabad","Bengaluru"], answer:1},
+
+{q:"Vice Admiral Vineet McCarty assumed charge as the ____ Commander-in-Chief of the Andaman & Nicobar Command (ANC).", options:["18th","19th","20th","21st"], answer:2},
+
+{q:"Vice Admiral Vineet McCarty succeeded whom as Commander-in-Chief of the Andaman & Nicobar Command (ANC)?", options:["Ajay Kochhar","Dinesh K. Tripathi","Krishna Swaminathan","Sanjay Vatsayan"], answer:1},
+
+{q:"The Andaman & Nicobar Command (ANC), recently in news, is significant because it is:", options:["India’s largest naval command","India’s first and only Tri-Service Command","India’s strategic missile command","India’s cyber warfare command"], answer:1},
+
+{q:"Andaman & Nicobar Command (ANC) was established in:", options:["1998","1999","2000","2001"], answer:3},
+
+{q:"The headquarters of the Andaman & Nicobar Command (ANC) is situated at:", options:["Visakhapatnam","Kochi","Port Blair","Chennai"], answer:2},
+
+{q:"Maj Gen Rachel Thomas assumed charge as Additional Director General (ADG) of:", options:["Army Medical Corps","Military Nursing Service (MNS)","Armed Forces Medical Services","Territorial Army Medical Wing"], answer:1},
+
+{q:"The Military Nursing Service (MNS) functions under:", options:["Ministry of Health & Family Welfare","Directorate General of Health Services","Indian Armed Forces","National Health Mission"], answer:2},
+
+{q:"Military Nursing Service (MNS), recently in news due to the appointment of Maj Gen Rachel Thomas, was established in:", options:["1888","1895","1902","1910"], answer:0},
+
+{q:"The headquarters of the Military Nursing Service (MNS) is located in:", options:["Pune","New Delhi","Lucknow","Chandigarh"], answer:1},
+
+{q:"The motto of the Military Nursing Service (MNS) is:", options:["Service Before Self","Duty, Honour, Courage","Nation Above All","Service and Sacrifice"], answer:0},
+
+{q:"Justice Meenakshi Madan Rai was appointed as the Chief Justice of:", options:["Allahabad High Court","Jharkhand High Court","Patna High Court","Sikkim High Court"], answer:2},
+
+{q:"Justice Meenakshi Madan Rai was appointed Chief Justice of Patna High Court by:", options:["Prime Minister of India","Chief Justice of India","President of India","Governor of Bihar"], answer:2},
+
+{q:"Patna High Court, recently in news due to the appointment of Justice Meenakshi Madan Rai, was established in:", options:["1912","1914","1916","1918"], answer:2},
+
+{q:"The headquarters of Patna High Court is located in:", options:["Ranchi","Patna","Gaya","Muzaffarpur"], answer:1},
+
+{q:"Shri Packirisamy was appointed as Chairman and Managing Director (CMD) of:", options:["REC Limited","NTPC Limited","Power Grid Corporation of India Limited","Power Finance Corporation (PFC)"], answer:3},
+
+{q:"Shri Packirisamy succeeded whom as CMD of Power Finance Corporation (PFC)?", options:["Ravinder Singh Dhillon","Parminder Chopra","R. S. Sharma","Manoj Sharma"], answer:1},
+
+{q:"Power Finance Corporation (PFC) functions under:", options:["Ministry of New and Renewable Energy","Ministry of Finance","Ministry of Power","Ministry of Heavy Industries"], answer:2},
+
+{q:"Power Finance Corporation (PFC) was established in:", options:["1984","1985","1986","1987"], answer:2},
+
+{q:"PFC holds which status among Central Public Sector Enterprises (CPSEs)?", options:["Navratna","Miniratna Category-I","Maharatna","Schedule-A PSU"], answer:2},
+
+{q:"D. K. Shivakumar took oath as the ____ Chief Minister of Karnataka.", options:["32nd","33rd","34th","35th"], answer:2},
+
+{q:"D. K. Shivakumar was sworn in as Chief Minister of Karnataka on:", options:["1 June 2026","2 June 2026","3 June 2026","4 June 2026"], answer:2},
+
+{q:"The oath of office to D. K. Shivakumar was administered by:", options:["Rajendra Vishwanath Arlekar","Thaawarchand Gehlot","R. N. Ravi","C. P. Radhakrishnan"], answer:1},
+
+{q:"The swearing-in ceremony of D. K. Shivakumar was held at:", options:["Vidhana Soudha","Freedom Park","Glass House, Lok Bhavan, Bengaluru","Raj Bhavan, Bengaluru"], answer:2},
+
+{q:"Karnataka, recently in news due to the swearing-in of D. K. Shivakumar, observes its Formation Day on:", options:["15 August 1947","1 November 1956","26 January 1950","1 May 1960"], answer:1},
+
+{q:"Lokhande Prashant Sitaram was appointed as Chairperson of:", options:["NCERT","UGC","CBSE","AICTE"], answer:2},
+
+{q:"Lokhande Prashant Sitaram succeeded whom as Chairperson of the Central Board of Secondary Education (CBSE)?", options:["Anita Karwal","Manoj Ahuja","Rahul Singh","Vineet Joshi"], answer:2},
+
+{q:"CBSE functions under which ministry?", options:["Ministry of Education","Ministry of Skill Development and Entrepreneurship","Ministry of Youth Affairs and Sports","Ministry of Social Justice and Empowerment"], answer:0},
+
+{q:"The Central Board of Secondary Education (CBSE) was established in:", options:["1927","1928","1929","1930"], answer:2},
+
+{q:"The Appointments Committee of the Cabinet (ACC) approved a one-year extension of tenure for whom as Advisor to the Prime Minister?", options:["Amit Khare","Tarun Kapoor","P. K. Mishra","Shaktikanta Das"], answer:1},
+
+{q:"The tenure extension of Tarun Kapoor as Advisor to the Prime Minister was approved by:", options:["Cabinet Committee on Economic Affairs","NITI Aayog","Appointments Committee of the Cabinet (ACC)","Ministry of Personnel"], answer:2},
+
+{q:"Swaminathan Janakiraman received a two-year extension in his role as:", options:["RBI Governor","Executive Director, RBI","Deputy Governor, RBI","Chairman, NABARD"], answer:2},
+
+{q:"Reserve Bank of India (RBI), which recently extended the tenure of Swaminathan Janakiraman, was established in:", options:["1934","1935","1936","1940"], answer:1},
+
+{q:"Under Article 217 of the Constitution, the President of India appointed six Additional Judges as Permanent Judges of:", options:["Madras High Court","Calcutta High Court","Bombay High Court","Delhi High Court"], answer:2},
+
+{q:"Bombay High Court, recently in news due to the appointment of Permanent Judges, was established in:", options:["1860","1861","1862","1863"], answer:2},
+
+{q:"Former Bangladesh cricket captain Tamim Iqbal was elected President of the Bangladesh Cricket Board (BCB) for a tenure of:", options:["Two years","Three years","Four years","Five years"], answer:2},
+
+{q:"Tamim Iqbal was elected President of the Bangladesh Cricket Board (BCB):", options:["By a narrow majority vote","Through a special election panel","Unopposed","By nomination from the ICC"], answer:2},
+
+];
+
+// ===============================
+// VARIABLES
+// ===============================
+
+let userAnswers = new Array(questions.length).fill(null);
+
+let markedForReview = new Array(questions.length).fill(false);
+
+let submitted = false;
+
+// ===============================
+// LOAD QUIZ
+// ===============================
+
+function loadQuiz(){
+
+    const quizDiv = document.getElementById("quiz");
+
+    questions.forEach((question,index)=>{
+
+        const qDiv = document.createElement("div");
+
+        qDiv.classList.add("question");
+
+        qDiv.id = `question_${index}`;
+
+        qDiv.innerHTML = `
+        <h3>Q${index+1}. ${question.q}</h3>
+        `;
+
+        question.options.forEach((option,optIndex)=>{
+
+            const opt = document.createElement("div");
+
+            opt.classList.add("option");
+
+            opt.innerText = option;
+
+            opt.onclick = ()=>selectOption(index,optIndex,opt);
+
+            opt.id = `q${index}_opt${optIndex}`;
+
+            qDiv.appendChild(opt);
+
+        });
+
+        // MARK BUTTON
+
+        const markBtn = document.createElement("button");
+
+        markBtn.innerText = "Mark For Review";
+
+        markBtn.classList.add("mark-btn");
+
+        markBtn.onclick = ()=>toggleMark(index,markBtn);
+
+        qDiv.appendChild(markBtn);
+
+        // CLEAR BUTTON
+
+        const clearBtn = document.createElement("button");
+
+        clearBtn.innerText = "Clear";
+
+        clearBtn.classList.add("clear-btn");
+
+        clearBtn.onclick = ()=>clearAnswer(index);
+
+        qDiv.appendChild(clearBtn);
+
+        quizDiv.appendChild(qDiv);
+
+    });
+
+}
+
+// ===============================
+// SELECT OPTION
+// ===============================
+
+function selectOption(qIndex,optIndex,element){
+
+    if(submitted) return;
+
+    userAnswers[qIndex] = optIndex;
+
+    const options = document.querySelectorAll(`[id^="q${qIndex}_opt"]`);
+
+    options.forEach(opt=>{
+        opt.classList.remove("selected");
+    });
+
+    element.classList.add("selected");
+
+}
+
+// ===============================
+// MARK FOR REVIEW
+// ===============================
+
+function toggleMark(index,button){
+
+    markedForReview[index] = !markedForReview[index];
+
+    const questionBox = document.getElementById(`question_${index}`);
+
+    if(markedForReview[index]){
+
+        button.classList.add("marked");
+
+        button.innerText = "Marked For Review";
+
+        questionBox.classList.add("review-marked");
+
+    }else{
+
+        button.classList.remove("marked");
+
+        button.innerText = "Mark For Review";
+
+        questionBox.classList.remove("review-marked");
+
+    }
+
+}
+
+// ===============================
+// CLEAR ANSWER
+// ===============================
+
+function clearAnswer(index){
+
+    if(submitted) return;
+
+    userAnswers[index] = null;
+
+    const options = document.querySelectorAll(`[id^="q${index}_opt"]`);
+
+    options.forEach(opt=>{
+        opt.classList.remove("selected");
+    });
+
+}
+
+// ===============================
+// SUBMIT QUIZ
+// ===============================
+
+function submitQuiz(){
+
+    if(submitted) return;
+
+    submitted = true;
+
+    clearInterval(timer);
+
+    let score = 0;
+
+    let correctCount = 0;
+    let wrongCount = 0;
+    let unansweredCount = 0;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        if(userAns === null){
+
+            unansweredCount++;
+
+        }
+        else if(userAns === question.answer){
+
+            score += 1;
+            correctCount++;
+
+        }
+        else{
+
+            score -= 0.25;
+            wrongCount++;
+
+        }
+
+    });
+
+    let attempted = correctCount + wrongCount;
+
+    let accuracy = attempted > 0
+    ? ((correctCount/attempted)*100).toFixed(2)
+    : 0;
+
+    document.body.innerHTML = `
+
+    <div class="container">
+
+        <div class="result-box">
+
+            <h1>Quiz Submitted ✅</h1>
+
+            <h2>Total Score: ${score.toFixed(2)}</h2>
+
+            <h3>Correct Answers: ${correctCount}</h3>
+
+            <h3>Wrong Answers: ${wrongCount}</h3>
+
+            <h3>Unanswered Questions: ${unansweredCount}</h3>
+
+            <h3>Accuracy: ${accuracy}%</h3>
+
+            <button class="review-btn" onclick="reviewAnswers()">
+            Review Answers
+            </button>
+
+            <div id="reviewSection"></div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+// ===============================
+// REVIEW ANSWERS
+// ===============================
+
+function reviewAnswers(){
+
+    const reviewSection = document.getElementById("reviewSection");
+
+    let html = `<h1 style="margin-top:40px;">Review Section</h1>`;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        let status = "";
+        let marks = "";
+
+        if(userAns === null){
+
+            status = `<span class="unanswered">Unanswered</span>`;
+            marks = `0 Marks`;
+
+        }
+        else if(userAns === question.answer){
+
+            status = `<span class="correct">Correct ✅</span>`;
+            marks = `+1 Mark`;
+
+        }
+        else{
+
+            status = `<span class="wrong">Wrong ❌</span>`;
+            marks = `-0.25 Mark`;
+
+        }
+
+        html += `
+
+        <div class="review-question">
+
+            <h3>Q${index+1}. ${question.q}</h3>
+
+            <p>${status}</p>
+
+            <p><b>Marks:</b> ${marks}</p>
+
+            <p>
+            <b>Your Answer:</b>
+            ${
+                userAns === null
+                ? "Not Attempted"
+                : question.options[userAns]
+            }
+            </p>
+
+            <div class="correct-answer">
+            <b>Correct Answer:</b>
+            ${question.options[question.answer]}
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    reviewSection.innerHTML = html;
+
+}
+
+// ===============================
+// TIMER
+// ===============================
+
+let time = 1800;
+
+let timer;
+
+let isPaused = false;
+
+function startTimer(){
+
+    timer = setInterval(()=>{
+
+        if(!isPaused){
+
+            let minutes = Math.floor(time/60);
+
+            let seconds = time%60;
+
+            document.getElementById("timer").innerText =
+            `Time Left: ${minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
+
+            time--;
+
+            if(time < 0){
+
+                clearInterval(timer);
+
+                alert("Time is up! Quiz auto-submitted.");
+
+                submitQuiz();
+
+            }
+
+        }
+
+    },1000);
+
+}
+
+// ===============================
+// PAUSE TIMER
+// ===============================
+
+function pauseTimer(){
+
+    if(submitted) return;
+
+    isPaused = true;
+
+    document.getElementById("pauseBtn").disabled = true;
+
+    document.getElementById("resumeBtn").disabled = false;
+
+    // Disable options
+    document.querySelectorAll(".option").forEach(opt=>{
+        opt.classList.add("disabled-option");
+    });
+
+    // Disable buttons
+    document.querySelectorAll(".mark-btn, .clear-btn").forEach(btn=>{
+        btn.disabled = true;
+        btn.classList.add("disabled-btn");
+    });
+
+}
+// ===============================
+// RESUME TIMER
+// ===============================
+
+function resumeTimer(){
+
+    if(submitted) return;
+
+    isPaused = false;
+
+    document.getElementById("pauseBtn").disabled = false;
+
+    document.getElementById("resumeBtn").disabled = true;
+
+    // Enable options
+    document.querySelectorAll(".option").forEach(opt=>{
+        opt.classList.remove("disabled-option");
+    });
+
+    // Enable buttons
+    document.querySelectorAll(".mark-btn, .clear-btn").forEach(btn=>{
+        btn.disabled = false;
+        btn.classList.remove("disabled-btn");
+    });
+
+}
+// ===============================
+
+loadQuiz();
+
+startTimer();
+
+</script>
+
+</body>
+</html>
